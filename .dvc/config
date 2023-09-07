@@ -1,0 +1,6 @@
+[core]
+    remote = iris
+['remote "omega"']
+    url = ssh://omega.gat.com:/fusion/projects/sparc/detach_ctrl/solps/TestSamples
+['remote "iris"']
+    url = ssh://iris.gat.com:/fusion/projects/sparc/detach_ctrl/solps/TestSamples

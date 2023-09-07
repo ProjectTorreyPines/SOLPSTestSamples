@@ -85,3 +85,34 @@ Even if you are updating a file inside the top level directoy, use the above com
 #### So where is the data stored really?
 
 Git keeps the version control information through .dvc files of corresponding directories. These files point to the location in server where the files are stored. The files are currently stored in `/fusion/projects/sparc/detach_ctrl/solps/TestSamples` but the internal file structure is not human readable. Best way to browse through the data is to clone this repository and doing dvc pull.
+
+## Using the samples in other repositories
+
+To use any particular sample file or directory in your other repository, do following once you are in your repo:
+
+```
+dvc init
+dvc import git@github.com:ProjectTorreyPines/TestSamples.git path/to/File_or_Directory_in_TestSampels -o destination/path/in/your/repo
+git add .dvc .dvcignore destination/path/in/your/repo
+git commit -m "Describe what data is being added"
+git push
+```
+
+Example of adding ITER_Lore_2296_00000/IMAS/edge_profiles.h5 data in GGDUtils.jl/samples:
+
+```
+dvc init
+dvc import git@github.com:ProjectTorreyPines/TestSamples.git ITER_Lore_2296_00000/IMAS/edge_profiles.h5 -o samples
+git add .dvc .dvcignore samples
+git commit -m "Adding edge_profiles.h5 through dvc, stopped using lfs now."
+git push
+```
+
+### Updating data in other repositories when data has been updated in TestSamples
+
+If data has been updated in TestSamples repository and pushed using dvc push, and if this data file is relevant in any other repository, go to that repository and do:
+
+```
+dvc update path/to/data/file.dvc  #.dvc is important at the end here
+dvc pull
+```

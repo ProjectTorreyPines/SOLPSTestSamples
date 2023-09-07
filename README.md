@@ -116,3 +116,7 @@ If data has been updated in TestSamples repository and pushed using dvc push, an
 dvc update path/to/data/file.dvc  #.dvc is important at the end here
 dvc pull
 ```
+
+## Important notes
+
+Since data is stored in the nfs directories, the dvc import or dvc pull commands only work from inside the fusion network.

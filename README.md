@@ -82,7 +82,7 @@ dvc push
 
 Even if you are updating a file inside the top level directoy, use the above commands to add the top level directory only, dvc will track the changes to the files correctly.
 
-#### So where is the data stored really?
+### So where is the data stored really?
 
 Git keeps the version control information through .dvc files of corresponding directories. These files point to the location in server where the files are stored. The files are currently stored in `/fusion/projects/sparc/detach_ctrl/solps/TestSamples` but the internal file structure is not human readable. Best way to browse through the data is to clone this repository and doing dvc pull.
 

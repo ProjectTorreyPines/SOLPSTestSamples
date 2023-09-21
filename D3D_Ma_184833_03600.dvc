@@ -4,10 +4,3 @@ outs:
   nfiles: 68
   hash: md5
   path: D3D_Ma_184833_03600
-md5: 64b266ef2483cbc6d78efe2d0b21315f
-frozen: true
-deps:
-- path: D3D_Ma_184833_03600
-  repo:
-    url: git@github.com:ProjectTorreyPines/TestSamples.git
-    rev_lock: dc2da57d329888998e008f766e620ee914541d2f

@@ -1,0 +1,12 @@
+md5: ad7bef46b0c9e871361a2ed7a68d4534
+frozen: true
+deps:
+- path: ITER_Lore_2296_00000/IMAS/edge_profiles.h5
+  repo:
+    url: git@github.com:ProjectTorreyPines/TestSamples.git
+    rev_lock: dc2da57d329888998e008f766e620ee914541d2f
+outs:
+- md5: c3d60ce69e9d3a9b9ec621e9276858e0
+  size: 168176600
+  hash: md5
+  path: samples

@@ -1,6 +1,6 @@
-# TestSamples
+# SOLPSTestSamples
 
-- [TestSamples](#testsamples)
+- [SOLPSTestSamples](#solpstestsamples)
   - [Sample SOLPS cases directory structure requirement](#sample-solps-cases-directory-structure-requirement)
   - [Using dvc](#using-dvc)
     - [Installing dvc](#installing-dvc)
@@ -12,6 +12,9 @@
     - [So where is the data stored really?](#so-where-is-the-data-stored-really)
   - [Using the samples in other repositories](#using-the-samples-in-other-repositories)
     - [Updating data in other repositories when data has been updated in TestSamples](#updating-data-in-other-repositories-when-data-has-been-updated-in-testsamples)
+  - [Update your remotes](#update-your-remotes)
+    - [Local TestSamples](#local-testsamples)
+    - [Other repos using this repo](#other-repos-using-this-repo)
 
 ## Sample SOLPS cases directory structure requirement
 Each case should have a top-level folder named:
@@ -151,7 +154,7 @@ once you are in your repo **at the top-most level**:
 
 ```
 dvc init
-dvc import git@github.com:ProjectTorreyPines/TestSamples.git path/to/File_or_Directory_in_TestSampels -o destination/path/in/your/repo
+dvc import git@github.com:ProjectTorreyPines/SOLPSTestSamples.git path/to/File_or_Directory_in_TestSampels -o destination/path/in/your/repo
 git add .dvc .dvcignore destination/path/in/your/repo
 git commit -m "Describe what data is being added"
 git push
@@ -161,7 +164,7 @@ Example of adding ITER_Lore_2296_00000/IMAS/edge_profiles.h5 data in GGDUtils.jl
 
 ```
 dvc init
-dvc import git@github.com:ProjectTorreyPines/TestSamples.git ITER_Lore_2296_00000/IMAS/edge_profiles.h5 -o samples
+dvc import git@github.com:ProjectTorreyPines/SOLPSTestSamples.git ITER_Lore_2296_00000/IMAS/edge_profiles.h5 -o samples
 git add .dvc .dvcignore samples
 git commit -m "Adding edge_profiles.h5 through dvc, stopped using lfs now."
 git push
@@ -175,4 +178,34 @@ this data file is relevant in any other repository, go to that repository and do
 ```
 dvc update path/to/data/file.dvc  #.dvc is important at the end here
 dvc pull
+```
+
+## Update your remotes
+
+This repo was previously called TestSamples. Please update your remotes and dvc config
+files as follows to avoid confusion. This is not strictly required, old links should
+continue to work.
+
+### Local TestSamples
+For your local copy of this repo:
+```
+git remote set-url origin git@github.com:ProjectTorreyPines/SOLPSTestSamples.git
+```
+You might want to update the name of your local directory as well.
+
+### Other repos using this repo
+For other repos that are using files from this repo, do following on MacOS:
+```
+grep -rl '\/TestSamples.git' ./ | LC_ALL=C xargs sed -i '' 's/\/TestSamples\.git/\/SOLPSTestSamples\.git/g'
+```
+and following on other unix:
+```
+grep -rl '\/TestSamples.git' ./ | xargs sed -i 's/\/TestSamples\.git/\/SOLPSTestSamples\.git/g'
+```
+
+Then do the following to ensure everything is up to date:
+```
+dvc update *.dvc
+git commit -am "Updated .dvc connections to point to new repo name SOLPSTestSamples"
+git push
 ```

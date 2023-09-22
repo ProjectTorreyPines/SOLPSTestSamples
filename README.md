@@ -1,6 +1,19 @@
 # TestSamples
 
-## Sample SOLPS cases
+- [TestSamples](#testsamples)
+  - [Sample SOLPS cases directory structure requirement](#sample-solps-cases-directory-structure-requirement)
+  - [Using dvc](#using-dvc)
+    - [Installing dvc](#installing-dvc)
+    - [Setting ssh config](#setting-ssh-config)
+      - [Password free loging setup](#password-free-loging-setup)
+      - [Password free loging from cybele to iris/omega](#password-free-loging-from-cybele-to-irisomega)
+      - [Username free ssh login and tunneling configuration](#username-free-ssh-login-and-tunneling-configuration)
+    - [Adding/ new data files or directories or updating existing files](#adding-new-data-files-or-directories-or-updating-existing-files)
+    - [So where is the data stored really?](#so-where-is-the-data-stored-really)
+  - [Using the samples in other repositories](#using-the-samples-in-other-repositories)
+    - [Updating data in other repositories when data has been updated in TestSamples](#updating-data-in-other-repositories-when-data-has-been-updated-in-testsamples)
+
+## Sample SOLPS cases directory structure requirement
 Each case should have a top-level folder named:
 <device>_<last name of originator/provider>_<shot number or similar identifier>_<time in ms>
 for example:
@@ -14,11 +27,14 @@ IMAS: any IMAS-format files go in this folder (there might not be any)
 The run folders have whatever names the original modeler gave them.
 
 ## Using dvc
-This repo stores test sample data files using [DVC](https://dvc.org/doc). If you want to add or modify data files "pointed by" this repository, you will need to install dvc locally.
+This repo stores test sample data files using [DVC](https://dvc.org/doc). If you want
+to add or modify data files "pointed by" this repository, you will need to install dvc
+locally.
 
 ### Installing dvc
 
-Preferred method for installing dvc is using conda. Here I give the commands to create a new conda environment just ofr dvc and installing it. This works on all OS.
+Preferred method for installing dvc is using conda. Here I give the commands to create
+a new conda environment just ofr dvc and installing it. This works on all OS.
 
 ```
 conda create --name dvc
@@ -29,7 +45,9 @@ conda install -c conda-forge dvc dvc-ssh
 
 ### Setting ssh config
 
-This repo is using nfs mount points in iris or omega for storing the files. So you need access to either of the two. To ensure that the repo does not have to keep your loging information, you should have your local ssh setup such that:
+This repo is using nfs mount points in iris or omega for storing the files. So you
+need access to either of the two. To ensure that the repo does not have to keep your
+loging information, you should have your local ssh setup such that:
 
 
 ```
@@ -40,18 +58,47 @@ or
 ssh omega.gat.com
 ```
 
-logs you into the computers directly without specifying username or getting password prompts. For this, you will need to add your ssh key to these computers and specify key location and username in your ssh config:
-
+logs you into the computers directly without specifying username or getting password
+prompts. For this, you will need to add your ssh key to these computers and specify key
+location, username, and tunneling in your ssh config:
 #### Password free loging setup
 ```
 ssh-keygen -t rsa                 # If you do not have this already
 ssh-copy-id user@iris.gat.com     # Copies your ssh key to iris with one time password prompt, replace user with your username
-ssh-copy-id user@omega.gat.com    # Copies your ssh key to omega with one time password prompt
+ssh-copy-id user@omega.gat.com    # Copies your ssh key to omega with one time password prompt, replace user with your username
 ```
 
-#### Username free ssh login
+#### Password free loging from cybele to iris/omega
+For seemlessly using this feature from outside the fusion network, we would use
+ssh tunneling through cybele which will work password free if you add your cybele
+account ssh key to iris and omega. For doing so, first add your key generated above to
+cybele (do this step before the last one if you are setting this up from outside the
+fusion network):
+```
+ssh-keygen -t rsa                 # If you do not have this already
+ssh-copy-id user@cybele.gat.com   # Copies your ssh key to cybele with one time password prompt, replace user with your username
+```
 
-Following should work for most unix systems, replace <username> with your iris or omega username:
+Then login to cybele and do:
+```
+ssh user@cybele                   # ssh into cybele
+ssh-keygen -t rsa                 # If you do not have this already
+ssh-copy-id user@iris.gat.com     # Copies your ssh key to iris with one time password prompt, replace user with your username
+ssh-copy-id user@omega.gat.com    # Copies your ssh key to omega with one time password prompt, replace user with your username
+```
+
+#### Username free ssh login and tunneling configuration
+
+Following should work for most unix systems, replace <username> with your iris or omega
+username:
+
+For cybele:
+```
+echo "Host cybele cybele.gat.com" >> ~/.ssh/config
+echo "  Hostname cybele.gat.com" >> ~/.ssh/config
+echo "  IdentityFile ~/.ssh/id_rsa" >> ~/.ssh/config
+echo "  User <username>" >> ~/.ssh/config
+```
 
 For iris:
 ```
@@ -59,6 +106,7 @@ echo "Host iris iris.gat.com" >> ~/.ssh/config
 echo "  Hostname iris.gat.com" >> ~/.ssh/config
 echo "  IdentityFile ~/.ssh/id_rsa" >> ~/.ssh/config
 echo "  User <username>" >> ~/.ssh/config
+echo "  ProxyCommand ssh -q cybele nc %h %p" >> ~/.ssh/config
 ```
 
 For omega:
@@ -67,11 +115,16 @@ echo "Host omega omega.gat.com" >> ~/.ssh/config
 echo "  Hostname omega.gat.com" >> ~/.ssh/config
 echo "  IdentityFile ~/.ssh/id_rsa" >> ~/.ssh/config
 echo "  User <username>" >> ~/.ssh/config
+echo "  ProxyCommand ssh -q cybele nc %h %p" >> ~/.ssh/config
 ```
 
 ### Adding/ new data files or directories or updating existing files
 
-Please follow the format specified above to inser t a enw data file in the correct existing directory or creating a new top-level directory. For sake of keeping data consistent, we hash the top-level directory in dvc directly instead of adding all individual files. For example, for adding D3D_Ma_184833_03600 top level directory, we do:
+Please follow the format specified above to insert a enw data file in the correct
+existing directory or creating a new top-level directory. For sake of keeping data
+consistent, we hash the top-level directory in dvc directly instead of adding all
+individual files. For example, for adding D3D_Ma_184833_03600 top level directory, we
+do:
 ```
 dvc add D3D_Ma_184833_03600
 git add D3D_Ma_184833_03600.dvc
@@ -80,15 +133,21 @@ git push
 dvc push
 ```
 
-Even if you are updating a file inside the top level directoy, use the above commands to add the top level directory only, dvc will track the changes to the files correctly.
+Even if you are updating a file inside the top level directoy, use the above commands
+to add the top level directory only, dvc will track the changes to the files correctly.
 
 ### So where is the data stored really?
 
-Git keeps the version control information through .dvc files of corresponding directories. These files point to the location in server where the files are stored. The files are currently stored in `/fusion/projects/sparc/detach_ctrl/solps/TestSamples` but the internal file structure is not human readable. Best way to browse through the data is to clone this repository and doing dvc pull.
+Git keeps the version control information through .dvc files of corresponding
+directories. These files point to the location in server where the files are stored.
+The files are currently stored in `/fusion/projects/sparc/detach_ctrl/solps/TestSamples`
+but the internal file structure is not human readable. Best way to browse through the
+data is to clone this repository and doing dvc pull.
 
 ## Using the samples in other repositories
 
-To use any particular sample file or directory in your other repository, do following once you are in your repo:
+To use any particular sample file or directory in your other repository, do following
+once you are in your repo **at the top-most level**:
 
 ```
 dvc init
@@ -110,13 +169,10 @@ git push
 
 ### Updating data in other repositories when data has been updated in TestSamples
 
-If data has been updated in TestSamples repository and pushed using dvc push, and if this data file is relevant in any other repository, go to that repository and do:
+If data has been updated in TestSamples repository and pushed using dvc push, and if
+this data file is relevant in any other repository, go to that repository and do:
 
 ```
 dvc update path/to/data/file.dvc  #.dvc is important at the end here
 dvc pull
 ```
-
-## Important notes
-
-Since data is stored in the nfs directories, the dvc import or dvc pull commands only work from inside the fusion network.

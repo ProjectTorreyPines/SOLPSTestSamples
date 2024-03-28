@@ -1,0 +1,6 @@
+outs:
+- md5: 73f12123b3fd73a60822e15f97e039db.dir
+  size: 106759800
+  nfiles: 2
+  hash: md5
+  path: misc_data_files

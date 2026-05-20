@@ -1,5 +1,5 @@
 [core]
-    remote = iris
+    remote = omega
 ['remote "omega"']
     url = ssh://omega.gat.com:/fusion/projects/sparc/detach_ctrl/solps/SOLPSTestSamples
 ['remote "iris"']
